@@ -1,0 +1,31 @@
+FROM docker.io/fedora:latest
+
+RUN mkdir /code
+WORKDIR /code
+
+# update system
+RUN dnf update -y
+
+# Add terrafrom
+RUN dnf install -y dnf-plugins-core
+RUN dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
+RUN dnf -y install terraform
+
+# Add tfswitch if you want different versions of terraform
+RUN curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh | bash
+
+# Install unzip and git
+RUN dnf install unzip git -y
+
+# Clean up for space
+RUN dnf clean all -y
+
+# Install AWS CLI
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
+RUN unzip awscliv2.zip
+RUN sudo ./aws/install
+
+# add the contents for your ~/.aws to the aws folder
+# if you want access to aws from terraform
+RUN mkdir /root/.aws
+ADD aws /root/.aws/
