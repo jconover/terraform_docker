@@ -1,0 +1,10 @@
+# dont want that out there ;-)
+.aws
+
+
+# OSX
+.DS_Store
+Icon?
+._*
+.Spotlight-V100
+.Trashes
