@@ -13,3 +13,5 @@ podman run --name=terraform -v ./TERRAFORM012:/code -d -it localhost/fedora:terr
 podman exec -it terraform bash
 
 I use Podman, do your thing
+
+podman build --tag ubuntu:terraform -f ./Dockerfile_Ubuntu.terrafrom
