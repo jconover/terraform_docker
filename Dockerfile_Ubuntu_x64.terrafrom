@@ -1,0 +1,47 @@
+FROM docker.io/ubuntu:latest
+
+RUN mkdir /code
+WORKDIR /code
+
+# update system and add dependencies
+RUN apt update && apt install -y gnupg software-properties-common wget
+
+# Locales
+RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
+	&& localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+ENV LANG en_US.utf8
+
+
+# Install the HashiCorp GPG key.
+RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
+  gpg --dearmor | \
+  tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+
+# Add the official HashiCorp repository to your system
+RUN echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+ tee /etc/apt/sources.list.d/hashicorp.list
+
+# Download the package information from HashiCorp.
+RUN apt update
+
+# Install Terraform from the new repository.
+RUN apt install -y terraform
+
+# Install unzip and git
+RUN apt install -y curl unzip
+
+# Clean up for space
+#RUN dnf clean all -y
+
+# Install AWS CLI
+# x64 like my windows box
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+RUN unzip awscliv2.zip
+RUN ./aws/install
+RUN /usr/local/bin/aws --version
+
+# add the contents for your ~/.aws to the aws folder
+# if you want access to aws from terraform
+RUN mkdir /root/.aws
+ADD aws /root/.aws/

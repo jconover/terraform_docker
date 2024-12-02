@@ -1,10 +1,16 @@
-FROM docker.io/ubuntu:noble
+FROM docker.io/ubuntu:latest
 
 RUN mkdir /code
 WORKDIR /code
 
 # update system and add dependencies
 RUN apt update && apt install -y gnupg software-properties-common wget
+
+# Locales
+RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
+	&& localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+ENV LANG en_US.utf8
+
 
 # Install the HashiCorp GPG key.
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
@@ -29,8 +35,9 @@ RUN apt install -y curl unzip
 #RUN dnf clean all -y
 
 # Install AWS CLI
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-RUN unzip awscliv2.zip
+# my macbook with m1
+RUN curl -O 'https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip'
+RUN unzip awscli-exe-linux-aarch64.zip
 RUN ./aws/install
 RUN /usr/local/bin/aws --version
 

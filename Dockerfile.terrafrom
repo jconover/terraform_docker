@@ -4,21 +4,21 @@ RUN mkdir /code
 WORKDIR /code
 
 # update system
-RUN dnf update -y
+RUN sudo dnf5 update -y
 
 # Add terrafrom
-RUN dnf install -y dnf-plugins-core
-RUN dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
-RUN dnf -y install terraform
+RUN sudo dnf5 install -y dnf-plugins-core
+RUN sudo dnf5 config-manager addrepo --id="hashicorp" --set=baseurl="https://rpm.releases.hashicorp.com/fedora/hashicorp.repo" --set=enabled=1 --overwrite
+RUN sudo dnf5 -y install terraform
 
 # Add tfswitch if you want different versions of terraform
 RUN curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh | bash
 
 # Install unzip and git
-RUN dnf install unzip git -y
+RUN sudo dnf5 install unzip git -y
 
 # Clean up for space
-RUN dnf clean all -y
+RUN sudo dnf5 clean all -y
 
 # Install AWS CLI
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
