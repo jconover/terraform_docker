@@ -1,11 +1,11 @@
-FROM docker.io/ubuntu:latest
-# FROM docker.io/ubuntu:noble  # LTS releases
+#FROM docker.io/ubuntu:latest
+FROM docker.io/ubuntu:noble
 
 RUN mkdir /code
 WORKDIR /code
 
 # update system and add dependencies
-RUN apt update && apt install -y gnupg software-properties-common wgete s
+RUN apt update && apt install -y gnupg software-properties-common wget
 
 # upgrade system for possible security patches
 RUN apt upgrade -y
