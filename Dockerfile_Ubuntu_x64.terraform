@@ -3,8 +3,11 @@ FROM docker.io/ubuntu:latest
 RUN mkdir /code
 WORKDIR /code
 
-# update system and add dependencies
-RUN apt update && apt install -y gnupg software-properties-common wget
+# update system and upgrade for latest security updates
+RUN apt update && apt upgrade -y
+
+# add some app dependencies
+RUN apt install -y gnupg software-properties-common wget
 
 # Locales
 RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
