@@ -14,6 +14,14 @@ podman exec -it terraform bash
 
 I use Podman, do your thing
 
-podman build --tag ubuntu:terraform -f ./Dockerfile_Ubuntu_x64.terraform
+podman build --tag ubuntu:terraform -f ./Dockerfile_Ubuntu.terrafrom
 
-podman build --tag ubuntu:terraform -f ./Dockerfile_Ubuntu_ARM.terraform
+For my macbook I need to use an ARM version:
+
+podman build --tag ubuntu:terraform -f ./Dockerfile_Ubuntu_ARM.terrafrom
+
+(terraform_code = a director I am currently working out of. Change it for your needs.)
+
+podman run --name=terraform -v ./terraform_code:/code -d -it localhost/ubuntu:terraform
+
+podman exec -it terraform bash
