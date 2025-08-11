@@ -29,10 +29,10 @@ RUN apt update
 RUN apt install -y terraform
 
 # Install unzip and git
-RUN apt install -y curl unzip
+RUN apt install -y curl unzip vim
 
 # Clean up for space
-#RUN dnf clean all -y
+RUN apt clean
 
 # Install AWS CLI
 # x64 like my windows box
@@ -45,3 +45,46 @@ RUN /usr/local/bin/aws --version
 # if you want access to aws from terraform
 RUN mkdir /root/.aws
 ADD aws /root/.aws/
+
+# Install Azure CLI
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
+# Install Docker on Ubuntu
+# Add Docker's official GPG key:
+RUN  apt-get update
+RUN  apt-get install -y ca-certificates curl gnupg
+RUN  install -m 0755 -d /etc/apt/keyrings
+RUN  curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+RUN  chmod a+r /etc/apt/keyrings/docker.asc
+# Set up the Docker repository
+RUN echo \
+   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+   $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null
+RUN  apt-get update
+# Install Docker
+RUN  apt-get install -y  docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Install Kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+RUN  install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+# Enable kubectl autocompletion
+RUN echo "source <(kubectl completion bash)" >> ~/.bashrc
+
+# Install Elastic Kubernetes Service (EKS) CLI
+# for ARM systems, set ARCH to: `arm64`, `armv6` or `armv7`
+# for AMD64 systems, set ARCH to: `amd64`
+
+RUN curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz"
+
+# (Optional) Verify checksum
+#RUN curl -sL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_checksums.txt" | grep amd64 | sha256sum --check
+
+RUN tar -xzf eksctl_Linux_amd64.tar.gz -C /tmp && rm eksctl_Linux_amd64.tar.gz
+
+RUN  install -m 0755 /tmp/eksctl /usr/local/bin && rm /tmp/eksctl
+
+# Install kubectl-ai
+# https://github.com/GoogleCloudPlatform/kubectl-ai
+#RUN curl -sSL https://raw.githubusercontent.com/GoogleCloudPlatform/kubectl-ai/main/install.sh | bash
